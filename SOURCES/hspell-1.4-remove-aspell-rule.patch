@@ -1,0 +1,43 @@
+diff -urN hspell-1.4.old/Makefile.in hspell-1.4/Makefile.in
+--- hspell-1.4.old/Makefile.in	2017-06-23 03:02:50.000000000 +0530
++++ hspell-1.4/Makefile.in	2018-09-20 11:12:50.241459999 +0530
+@@ -306,19 +306,6 @@
+ 
+ mk_he_affix.o: prefixes.c hspell.h
+ 
+-# The "he_affix.dat" and "he.wl" files are the two files basic files which
+-# together form an Aspell 0.6 dictionary.
+-.PHONY: aspell
+-aspell: he_affix.dat he.wl
+-he.wl: mk_he_affix wunzip hebrew.wgz hebrew.wgz.prefixes specfilter
+-	./mk_he_affix 0 he_affix.dat he.wl
+-he_affix.dat: he.wl
+-
+-# Aspell runtime prefers a hash-table dump which can be mmapped, instead of
+-# the textual word format:
+-he.rws: he.wl
+-	aspell --lang=he create master ./he.rws < he.wl
+-
+ # The "he.dic" and "he.aff" files are the two files basic files which
+ # form a Hunspell dictionary; Hunspell is the multilingual spellchecker used
+ # by Firefox, OpenOffice, and many other projects. The format of these files
+@@ -346,5 +333,5 @@
+ 
+ # A (very small number of) automated tests
+ .PHONY: test
+-test: hspell hebrew.wgz.sizes he.rws hunspell
++test: hspell hebrew.wgz.sizes hunspell
+ 	test/test1
+diff -urN hspell-1.4.old/test/test1 hspell-1.4/test/test1
+--- hspell-1.4.old/test/test1	2012-02-27 04:23:23.000000000 +0530
++++ hspell-1.4/test/test1	2018-09-20 11:13:02.437284530 +0530
+@@ -79,9 +79,6 @@
+ cat $DIR/test1.dat|
+ test_all hspell	./hspell -Dhebrew.wgz -a
+ 
+-cat $DIR/test1.dat|
+-test_all aspell	aspell --dict-dir=. -d he.rws -a
+-
+ iconv -f iso-8859-8 -t utf-8 $DIR/test1.dat |
+ test_all hunspell	hunspell -i utf-8 -d `pwd`/he -a
+ 
